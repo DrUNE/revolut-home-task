@@ -3,8 +3,11 @@
  */
 import React, { Component } from 'react'
 import Big from 'big.js'
+import uuid from 'uuid/v4'
+import styled from 'styled-components'
 
-import Rate from 'components/Rate'
+import RateComponent from 'components/Rate'
+import AccountListComponent from 'components/AccountList'
 import * as CurrencyCode from 'domain/CurrencyCode'
 
 const rate = {
@@ -13,12 +16,44 @@ const rate = {
   rate            : new Big('0.84473')
 }
 
+const accounts = {
+  [uuid()]: {
+    currencyCode: CurrencyCode.EUR,
+    amount      : Big('100.75')
+  },
+  [uuid()]: {
+    currencyCode: CurrencyCode.GBP,
+    amount      : Big('100.75')
+  },
+  [uuid()]: {
+    currencyCode: CurrencyCode.USD,
+    amount      : Big('100.75')
+  },
+
+}
+
+const Container = styled.div`
+  padding: 24px;
+  max-width: 600px;
+  background-color: #1D95E7; 
+  color: white;
+`
+const Rate = styled(RateComponent)`
+  text-align: center;
+`
+const AccountList = styled(AccountListComponent)`
+
+`
+
 class Exchange extends Component {
   render () {
+    const {className} = this.props
+    const containerProps = {className}
     return (
-      <div>
+      <Container {...containerProps}>
         <Rate {...rate}/>
-      </div>
+        <AccountList accounts={accounts}/>
+      </Container>
     )
   }
 }
