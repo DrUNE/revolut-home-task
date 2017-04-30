@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
 
+import Exchange from 'components/Exchange'
+
 class App extends Component {
   render () {
     return (
-      <h1>
-        Hello
-      </h1>
+      <div>
+        <Exchange/>
+      </div>
     )
   }
 }
