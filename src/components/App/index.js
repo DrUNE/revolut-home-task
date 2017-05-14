@@ -1,8 +1,14 @@
 import React, { Component } from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 import styled from 'styled-components'
 
 import { centerHorisontally } from 'components/theme'
 import ExchangeComponent from 'components/Exchange'
+import * as CurrencyCode from 'domain/CurrencyCode'
+
+import * as actions from './actions'
+import * as selectors from './selectors'
 
 const Exchange = styled(centerHorisontally(ExchangeComponent))`
   margin-top: 50px;
@@ -13,10 +19,29 @@ const Exchange = styled(centerHorisontally(ExchangeComponent))`
 
 class App extends Component {
   render () {
+    const {accounts, rates} = this.props
+    const exchangeProps = {accounts, rates}
     return (
-      <Exchange/>
+      <Exchange {...exchangeProps}/>
     )
+  }
+
+  componentDidMount () {
+    this.props.actions.startLiveExchangeRates(Object.keys(CurrencyCode))
+  }
+
+  componentWillUnmount () {
+    this.props.actions.stopLiveExchangeRates()
   }
 }
 
-export default App
+const mapStateToProps = (state) => {
+  return {accounts: selectors.accounts(state), rates: selectors.rates(state)}
+}
+
+const mapDispatchToProps = dispatch => ({actions: bindActionCreators(actions, dispatch)})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App)

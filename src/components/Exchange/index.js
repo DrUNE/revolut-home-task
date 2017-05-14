@@ -2,35 +2,17 @@
  * Created by drune on 30/04/2017.
  */
 import React, { Component } from 'react'
+import { PropTypes } from 'prop-types'
 import Big from 'big.js'
-import uuid from 'uuid/v4'
 import styled from 'styled-components'
 
 import RateComponent from 'components/Rate'
 import AccountListComponent from 'components/AccountList'
+import MoneyInputComponent from 'components/MoneyInput'
 import * as CurrencyCode from 'domain/CurrencyCode'
 
-const rate = {
-  currencyCodeFrom: CurrencyCode.EUR,
-  currencyCodeTo  : CurrencyCode.GBP,
-  rate            : new Big('0.84473')
-}
-
-const accounts = {
-  [uuid()]: {
-    currencyCode: CurrencyCode.EUR,
-    amount      : Big('100.75')
-  },
-  [uuid()]: {
-    currencyCode: CurrencyCode.GBP,
-    amount      : Big('100.75')
-  },
-  [uuid()]: {
-    currencyCode: CurrencyCode.USD,
-    amount      : Big('100.75')
-  },
-
-}
+const currencyCodeFrom = CurrencyCode.EUR
+const currencyCodeTo = CurrencyCode.GBP
 
 const Container = styled.div`
   padding: 24px;
@@ -44,15 +26,36 @@ const Rate = styled(RateComponent)`
 const AccountList = styled(AccountListComponent)`
 
 `
+const MoneyInput = styled(MoneyInputComponent)`
+  text-align: end;
+`
 
 class Exchange extends Component {
+  static propTypes = {
+    rates   : PropTypes.object.isRequired,
+    accounts: PropTypes.object.isRequired
+  }
+
+  constructor (...params) {
+    super(...params)
+    this.state = {amount: new Big('0.00')}
+  }
+
+  handleMoneyInputChange = (amount) => {
+    console.log(amount.toString())
+    this.setState({amount})
+  }
+
   render () {
-    const {className} = this.props
+    const {className, accounts, rates} = this.props
     const containerProps = {className}
+    const from = rates[currencyCodeFrom]
+    const to = rates[currencyCodeTo]
     return (
       <Container {...containerProps}>
-        <Rate {...rate}/>
+        {to && from && <Rate currencyCodeFrom = {currencyCodeFrom} currencyCodeTo={currencyCodeTo} rate={to.div(from)}/>}
         <AccountList accounts={accounts}/>
+        <MoneyInput value={this.state.amount} onChange={this.handleMoneyInputChange}/>
       </Container>
     )
   }
