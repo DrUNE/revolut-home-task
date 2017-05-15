@@ -15,7 +15,6 @@ const selectedStyle = ({selected}) => selected ? 'border: 1px solid white;' : ''
 
 const Account = styled(AccountComponent)`
   margin-bottom: 32px;
-  ${selectedStyle}
 `
 
 export const AccountList = ({accounts, className, selectAccount, selectedId}) => {

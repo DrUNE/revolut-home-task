@@ -15,7 +15,6 @@ import * as selectors from './selectors'
 const Exchange = styled(centerHorisontally(ExchangeComponent))`
   margin-top: 50px;
   border-radius: 3px;
-  min-height: 500px;
   box-shadow: rgba(0, 0, 0, 0.75) 9px 33px 91px -29px;
 `
 

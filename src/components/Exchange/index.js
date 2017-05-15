@@ -15,6 +15,9 @@ const currencyCodeFrom = CurrencyCode.EUR
 const currencyCodeTo = CurrencyCode.GBP
 
 const Container = styled.div`
+  display: flex;
+  justify-content: space-between;
+  
   padding: 24px;
   max-width: 600px;
   background-color: #1D95E7; 
@@ -24,10 +27,17 @@ const Rate = styled(RateComponent)`
   text-align: center;
 `
 const AccountList = styled(AccountListComponent)`
-
+  
 `
+const InputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`
+
 const MoneyInput = styled(MoneyInputComponent)`
   text-align: end;
+  margin: 12px;
 `
 
 export class Exchange extends Component {
@@ -44,7 +54,8 @@ export class Exchange extends Component {
   }
 
   render () {
-    const {className, accounts, rates, selectFromAccount,
+    const {
+            className, accounts, rates, selectFromAccount,
             fromAccountId, selectToAccount, toAccountId, amount, amountChanged
           } = this.props
     const containerProps = {className}
@@ -52,10 +63,13 @@ export class Exchange extends Component {
     const to = rates[currencyCodeTo]
     return (
       <Container {...containerProps}>
-        {to && from && <Rate currencyCodeFrom={currencyCodeFrom} currencyCodeTo={currencyCodeTo} rate={to.div(from)}/>}
+
         <AccountList accounts={accounts} selectAccount={selectFromAccount} selectedId={fromAccountId}/>
+        <InputContainer>
+          <MoneyInput value={amount} onChange={amountChanged}/>
+          {to && from && <Rate currencyCodeFrom={currencyCodeFrom} currencyCodeTo={currencyCodeTo} rate={to.div(from).toFixed(4)}/>}
+        </InputContainer>
         <AccountList accounts={accounts} selectAccount={selectToAccount} selectedId={toAccountId}/>
-        <MoneyInput value={amount} onChange={amountChanged}/>
       </Container>
     )
   }
