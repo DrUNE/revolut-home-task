@@ -8,11 +8,11 @@ import Big from 'big.js'
 import * as CurrencyCode from 'domain/CurrencyCode'
 import CurrencyCodeToSymbolMap from 'domain/CurrencyCodeToSymbolMap'
 
-const CurrencyExchangeRate = ({currencyCodeFrom, currencyCodeTo, rate, className}) => {
+const CurrencyExchangeRate = ({currencyCodeFrom, currencyCodeTo, rate, fixed = 2, className}) => {
   const fromSymbol = CurrencyCodeToSymbolMap[currencyCodeFrom]
   const toSymbol = CurrencyCodeToSymbolMap[currencyCodeTo]
   return (
-    <div className={className}>{`${fromSymbol}1 = ${toSymbol}${rate.toString()}`}</div>
+    <div className={className}>{`${fromSymbol}1 = ${toSymbol}${rate.toFixed(fixed)}`}</div>
   )
 }
 
@@ -20,6 +20,7 @@ CurrencyExchangeRate.propTypes = {
   currencyCodeFrom: PropTypes.oneOf([...Object.keys(CurrencyCode)]).isRequired,
   currencyCodeTo  : PropTypes.oneOf([...Object.keys(CurrencyCode)]).isRequired,
   rate            : PropTypes.instanceOf(Big).isRequired,
+  fixed           : PropTypes.number,
   className       : PropTypes.string
 }
 

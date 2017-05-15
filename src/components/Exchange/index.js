@@ -9,11 +9,6 @@ import styled from 'styled-components'
 import RateComponent from 'components/Rate'
 import AccountListComponent from 'components/AccountList'
 import MoneyInputComponent from 'components/MoneyInput'
-import * as CurrencyCode from 'domain/CurrencyCode'
-
-const currencyCodeFrom = CurrencyCode.EUR
-const currencyCodeTo = CurrencyCode.GBP
-
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
@@ -30,6 +25,7 @@ const AccountList = styled(AccountListComponent)`
   
 `
 const InputContainer = styled.div`
+  flex: 0 auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -38,6 +34,15 @@ const InputContainer = styled.div`
 const MoneyInput = styled(MoneyInputComponent)`
   text-align: end;
   margin: 12px;
+  
+  border: none;
+  border-bottom: 1px solid white;
+  background-color: #1d95e7;
+  font-size: 20px;
+  
+  &:focus {
+    outline: none;
+  }
 `
 
 export class Exchange extends Component {
@@ -59,6 +64,8 @@ export class Exchange extends Component {
             fromAccountId, selectToAccount, toAccountId, amount, amountChanged
           } = this.props
     const containerProps = {className}
+    const currencyCodeFrom = accounts[fromAccountId] && accounts[fromAccountId].currencyCode
+    const currencyCodeTo = accounts[toAccountId] && accounts[toAccountId].currencyCode
     const from = rates[currencyCodeFrom]
     const to = rates[currencyCodeTo]
     return (
@@ -67,7 +74,7 @@ export class Exchange extends Component {
         <AccountList accounts={accounts} selectAccount={selectFromAccount} selectedId={fromAccountId}/>
         <InputContainer>
           <MoneyInput value={amount} onChange={amountChanged}/>
-          {to && from && <Rate currencyCodeFrom={currencyCodeFrom} currencyCodeTo={currencyCodeTo} rate={to.div(from).toFixed(4)}/>}
+          {to && from && <Rate currencyCodeFrom={currencyCodeFrom} currencyCodeTo={currencyCodeTo} rate={to.div(from)} fixed={4}/>}
         </InputContainer>
         <AccountList accounts={accounts} selectAccount={selectToAccount} selectedId={toAccountId}/>
       </Container>
