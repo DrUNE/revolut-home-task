@@ -15,10 +15,10 @@ const Currency = styled.div`
 `
 const Amount = styled.div``
 
-export const Account = ({currencyCode, amount, className}) => {
+export const Account = ({currencyCode, amount, className, ...restProps}) => {
   const currencySymbol = CurrencyCodeToSymbolMap[currencyCode]
   return (
-    <Container className={className}>
+    <Container className={className} {...restProps}>
       <Currency>{currencyCode}</Currency>
       <Amount>{`You have ${currencySymbol}${amount.toString()}`}</Amount>
     </Container>

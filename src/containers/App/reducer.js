@@ -27,7 +27,10 @@ const accounts = {
 export const appInitialState = {
   exchangeRatePollerId: null,
   accounts,
-  rates               : {}
+  rates               : {},
+  fromAccountId       : null,
+  toAccountId         : null,
+  amount              : Big('0.00')
 }
 
 export default (state = appInitialState, action) => {
@@ -44,6 +47,14 @@ export default (state = appInitialState, action) => {
     case types.EXCHANGE_RATES:
       return {...state, rates: action.payload}
 
+    case types.SELECT_FROM_ACCOUNT:
+      return {...state, fromAccountId: action.payload}
+
+    case types.SELECT_TO_ACCOUNT:
+      return {...state, toAccountId: action.payload}
+
+    case types.AMOUNT_CHANGED:
+      return {...state, amount: action.payload}
     default:
       return state
   }

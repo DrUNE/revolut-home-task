@@ -30,32 +30,32 @@ const MoneyInput = styled(MoneyInputComponent)`
   text-align: end;
 `
 
-class Exchange extends Component {
+export class Exchange extends Component {
+
   static propTypes = {
-    rates   : PropTypes.object.isRequired,
-    accounts: PropTypes.object.isRequired
-  }
-
-  constructor (...params) {
-    super(...params)
-    this.state = {amount: new Big('0.00')}
-  }
-
-  handleMoneyInputChange = (amount) => {
-    console.log(amount.toString())
-    this.setState({amount})
+    rates            : PropTypes.object.isRequired,
+    accounts         : PropTypes.object.isRequired,
+    selectFromAccount: PropTypes.func.isRequired,
+    fromAccountId    : PropTypes.string,
+    selectToAccount  : PropTypes.func.isRequired,
+    toAccountId      : PropTypes.string,
+    amount           : PropTypes.instanceOf(Big).isRequired,
+    amountChanged    : PropTypes.func.isRequired
   }
 
   render () {
-    const {className, accounts, rates} = this.props
+    const {className, accounts, rates, selectFromAccount,
+            fromAccountId, selectToAccount, toAccountId, amount, amountChanged
+          } = this.props
     const containerProps = {className}
     const from = rates[currencyCodeFrom]
     const to = rates[currencyCodeTo]
     return (
       <Container {...containerProps}>
-        {to && from && <Rate currencyCodeFrom = {currencyCodeFrom} currencyCodeTo={currencyCodeTo} rate={to.div(from)}/>}
-        <AccountList accounts={accounts}/>
-        <MoneyInput value={this.state.amount} onChange={this.handleMoneyInputChange}/>
+        {to && from && <Rate currencyCodeFrom={currencyCodeFrom} currencyCodeTo={currencyCodeTo} rate={to.div(from)}/>}
+        <AccountList accounts={accounts} selectAccount={selectFromAccount} selectedId={fromAccountId}/>
+        <AccountList accounts={accounts} selectAccount={selectToAccount} selectedId={toAccountId}/>
+        <MoneyInput value={amount} onChange={amountChanged}/>
       </Container>
     )
   }
