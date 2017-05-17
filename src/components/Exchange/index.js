@@ -9,6 +9,9 @@ import styled from 'styled-components'
 import RateComponent from 'components/Rate'
 import AccountListComponent from 'components/AccountList'
 import MoneyInputComponent from 'components/MoneyInput'
+import CurrencyCodeToSymbolMap from 'domain/CurrencyCodeToSymbolMap'
+import ExchangeButton from 'components/ExchangeButton'
+
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
@@ -45,6 +48,17 @@ const MoneyInput = styled(MoneyInputComponent)`
   }
 `
 
+function isExchangePossible (props) {
+  const {accounts, fromAccountId, toAccountId, amount} = props
+
+  if (accounts && fromAccountId && toAccountId && fromAccountId !== toAccountId) {
+    const accountBalance = accounts[fromAccountId].amount
+    if (amount.gt(0) && accountBalance.gte(amount)) return true
+  }
+
+  return false
+}
+
 export class Exchange extends Component {
 
   static propTypes = {
@@ -63,18 +77,25 @@ export class Exchange extends Component {
             className, accounts, rates, selectFromAccount,
             fromAccountId, selectToAccount, toAccountId, amount, amountChanged
           } = this.props
+
     const containerProps = {className}
+
     const currencyCodeFrom = accounts[fromAccountId] && accounts[fromAccountId].currencyCode
     const currencyCodeTo = accounts[toAccountId] && accounts[toAccountId].currencyCode
+
     const from = rates[currencyCodeFrom]
     const to = rates[currencyCodeTo]
+
     return (
       <Container {...containerProps}>
-
         <AccountList accounts={accounts} selectAccount={selectFromAccount} selectedId={fromAccountId}/>
         <InputContainer>
           <MoneyInput value={amount} onChange={amountChanged}/>
-          {to && from && <Rate currencyCodeFrom={currencyCodeFrom} currencyCodeTo={currencyCodeTo} rate={to.div(from)} fixed={4}/>}
+          {to && from &&
+          <Rate currencyCodeFrom={currencyCodeFrom} currencyCodeTo={currencyCodeTo} rate={to.div(from)} fixed={4}/>}
+          {to && from &&
+          <ExchangeButton disabled={!isExchangePossible(this.props)}>
+            {`Exchange to ${CurrencyCodeToSymbolMap[currencyCodeTo]}${amount.times(to.div(from)).round(2,0)}`}</ExchangeButton>}
         </InputContainer>
         <AccountList accounts={accounts} selectAccount={selectToAccount} selectedId={toAccountId}/>
       </Container>
