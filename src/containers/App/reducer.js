@@ -11,15 +11,15 @@ import * as types from './constants'
 const accounts = {
   [uuid()]: {
     currencyCode: CurrencyCode.EUR,
-    amount      : Big('100.75')
+    amount      : Big(0)
   },
   [uuid()]: {
     currencyCode: CurrencyCode.GBP,
-    amount      : Big('100.75')
+    amount      : Big(0)
   },
   [uuid()]: {
     currencyCode: CurrencyCode.USD,
-    amount      : Big('100.75')
+    amount      : Big(0)
   },
 
 }
@@ -55,6 +55,10 @@ export default (state = appInitialState, action) => {
 
     case types.AMOUNT_CHANGED:
       return {...state, amount: action.payload}
+
+    case types.ACCOUNTS_CHANGED:
+      return {...state, accounts: action.payload}
+
     default:
       return state
   }

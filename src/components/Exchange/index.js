@@ -1,7 +1,7 @@
 /**
  * Created by drune on 30/04/2017.
  */
-import React, { Component } from 'react'
+import React from 'react'
 import { PropTypes } from 'prop-types'
 import Big from 'big.js'
 import styled from 'styled-components'
@@ -48,59 +48,53 @@ const MoneyInput = styled(MoneyInputComponent)`
   }
 `
 
-function isExchangePossible (props) {
-  const {accounts, fromAccountId, toAccountId, amount} = props
+function Exchange (props) {
+  const {
+          className, accounts, selectFromAccount, isExchangePossible,
+          fromAccountId, selectToAccount, toAccountId, amount, amountChanged, exchange, doExchange
+        } = props
 
-  if (accounts && fromAccountId && toAccountId && fromAccountId !== toAccountId) {
-    const accountBalance = accounts[fromAccountId].amount
-    if (amount.gt(0) && accountBalance.gte(amount)) return true
-  }
+  const containerProps = {className}
 
-  return false
+  return (
+    <Container {...containerProps}>
+      <AccountList accounts={accounts}
+                   selectAccount={selectFromAccount}
+                   selectedId={fromAccountId}/>
+      <InputContainer>
+        <MoneyInput value={amount}
+                    onChange={amountChanged}/>
+        {exchange && <Rate currencyCodeFrom={accounts[fromAccountId].currencyCode}
+                           currencyCodeTo={accounts[toAccountId].currencyCode}
+                           rate={exchange.exchangeRate}
+                           fixed={4}/>}
+        {exchange &&
+        <ExchangeButton disabled={!isExchangePossible}
+                        onClick={() => doExchange({fromAccountId, toAccountId, amount, exchangeAmount: exchange.exchangeAmount, exchangeRate:exchange.exchangeRate})}>
+          {`Exchange to ${CurrencyCodeToSymbolMap[accounts[toAccountId].currencyCode]}${exchange.exchangeAmount}`}</ExchangeButton>}
+      </InputContainer>
+      <AccountList accounts={accounts}
+                   selectAccount={selectToAccount}
+                   selectedId={toAccountId}/>
+    </Container>
+  )
 }
 
-export class Exchange extends Component {
-
-  static propTypes = {
-    rates            : PropTypes.object.isRequired,
-    accounts         : PropTypes.object.isRequired,
-    selectFromAccount: PropTypes.func.isRequired,
-    fromAccountId    : PropTypes.string,
-    selectToAccount  : PropTypes.func.isRequired,
-    toAccountId      : PropTypes.string,
-    amount           : PropTypes.instanceOf(Big).isRequired,
-    amountChanged    : PropTypes.func.isRequired
-  }
-
-  render () {
-    const {
-            className, accounts, rates, selectFromAccount,
-            fromAccountId, selectToAccount, toAccountId, amount, amountChanged
-          } = this.props
-
-    const containerProps = {className}
-
-    const currencyCodeFrom = accounts[fromAccountId] && accounts[fromAccountId].currencyCode
-    const currencyCodeTo = accounts[toAccountId] && accounts[toAccountId].currencyCode
-
-    const from = rates[currencyCodeFrom]
-    const to = rates[currencyCodeTo]
-
-    return (
-      <Container {...containerProps}>
-        <AccountList accounts={accounts} selectAccount={selectFromAccount} selectedId={fromAccountId}/>
-        <InputContainer>
-          <MoneyInput value={amount} onChange={amountChanged}/>
-          {to && from &&
-          <Rate currencyCodeFrom={currencyCodeFrom} currencyCodeTo={currencyCodeTo} rate={to.div(from)} fixed={4}/>}
-          {to && from &&
-          <ExchangeButton disabled={!isExchangePossible(this.props)}>
-            {`Exchange to ${CurrencyCodeToSymbolMap[currencyCodeTo]}${amount.times(to.div(from)).round(2,0)}`}</ExchangeButton>}
-        </InputContainer>
-        <AccountList accounts={accounts} selectAccount={selectToAccount} selectedId={toAccountId}/>
-      </Container>
-    )
-  }
+Exchange.propTypes = {
+  rates             : PropTypes.object.isRequired,
+  accounts          : PropTypes.object.isRequired,
+  selectFromAccount : PropTypes.func.isRequired,
+  fromAccountId     : PropTypes.string,
+  selectToAccount   : PropTypes.func.isRequired,
+  toAccountId       : PropTypes.string,
+  amount            : PropTypes.instanceOf(Big).isRequired,
+  amountChanged     : PropTypes.func.isRequired,
+  isExchangePossible: PropTypes.bool.isRequired,
+  exchange          : PropTypes.shape({
+    exchangeRate  : PropTypes.instanceOf(Big).isRequired,
+    exchangeAmount: PropTypes.instanceOf(Big).isRequired
+  }),
+  doExchange        : PropTypes.func.isRequired
 }
 
 export default Exchange

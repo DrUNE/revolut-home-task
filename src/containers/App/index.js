@@ -10,7 +10,7 @@ import ExchangeComponent from 'components/Exchange'
 import * as CurrencyCode from 'domain/CurrencyCode'
 
 import * as actions from './actions'
-import * as selectors from './selectors'
+import selectors from './selectors'
 
 const Exchange = styled(centerHorisontally(ExchangeComponent))`
   margin-top: 50px;
@@ -42,6 +42,7 @@ export class App extends Component {
 
   componentDidMount () {
     this.props.startLiveExchangeRates(Object.keys(CurrencyCode))
+    this.props.accountsInfo()
   }
 
   componentWillUnmount () {
@@ -50,6 +51,6 @@ export class App extends Component {
 }
 
 export default connect(
-  state => ({...selectors.app(state)}),
+  state => ({...selectors(state)}),
   dispatch => ({...bindActionCreators(actions, dispatch)})
 )(App)

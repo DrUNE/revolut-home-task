@@ -4,8 +4,13 @@
 import * as types from './constants'
 import { liveExchangeRatesSubscriptions } from './selectors'
 import rates from 'api/rates'
+import * as accounts from 'api/accounts'
 
 const pollIntervalMilliseconds = 3000 * 1000
+
+function dispatchLater (dispatch, actionCreator){
+  return (...args) => dispatch(actionCreator(...args))
+}
 
 const ratesByCurrencies = (currencies) =>
   (dispatch, getState) =>
@@ -39,3 +44,22 @@ export const exchangeRates = (newRates) => ({
   type   : types.EXCHANGE_RATES,
   payload: newRates
 })
+
+export const accountsChanged = (accounts) =>({
+  type   : types.ACCOUNTS_CHANGED,
+  payload: accounts
+})
+
+export const accountsInfo = () =>
+  (dispatch, getState) => {
+    accounts.notifyChanges(dispatchLater(dispatch, accountsChanged))
+    accounts.notifyAccountsChanged()
+  }
+
+export const doExchange = (exchange) =>
+  (dispatch, getState) => {
+    accounts.notifyChanges(dispatchLater(dispatch, accountsChanged))
+    //TODO here can be done validation before send to backend
+    accounts.doExchange(exchange)
+  }
+
