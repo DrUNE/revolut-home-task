@@ -33,12 +33,12 @@ const exchange = createSelector(
   })
 
 const isExchangePossible = createSelector(
-  [exchange, accounts, fromAccountId],
-  (exchange, accounts, fromAccountId) => {
+  [exchange, accounts, fromAccountId, amount],
+  (exchange, accounts, fromAccountId, amount) => {
 
     if (exchange) {
       const accountBalance = accounts[fromAccountId].amount
-      if (exchange.exchangeAmount.gt(0) && accountBalance.gte(exchange.exchangeAmount)) return true
+      if (exchange.exchangeAmount.gt(0) && accountBalance.gte(amount)) return true
     }
 
     return false

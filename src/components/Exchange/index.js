@@ -23,6 +23,7 @@ const Container = styled.div`
 `
 const Rate = styled(RateComponent)`
   text-align: center;
+  font-size: 10px;
 `
 const AccountList = styled(AccountListComponent)`
   
@@ -50,9 +51,29 @@ const MoneyInput = styled(MoneyInputComponent)`
 
 function Exchange (props) {
   const {
-          className, accounts, selectFromAccount, isExchangePossible,
-          fromAccountId, selectToAccount, toAccountId, amount, amountChanged, exchange, doExchange
+          className,
+          accounts,
+          selectFromAccount,
+          isExchangePossible,
+          fromAccountId,
+          selectToAccount,
+          toAccountId,
+          amount,
+          amountChanged,
+          exchange,
+          doExchange
         } = props
+
+  const onExchange = () => doExchange({
+    fromAccountId,
+    toAccountId,
+    amount,
+    exchangeAmount: exchange.exchangeAmount,
+    exchangeRate  : exchange.exchangeRate
+  })
+  const toAmountText = () => `${CurrencyCodeToSymbolMap[accounts[toAccountId].currencyCode]}${exchange.exchangeAmount.toFixed(2)}`
+  const fromAmountText = () => `${CurrencyCodeToSymbolMap[accounts[fromAccountId].currencyCode]}${amount.toFixed(2)}`
+  const exchangeMessage = () => (<div><div>Exchange</div><span>{`${fromAmountText()} to ${toAmountText()}`}</span></div>)
 
   const containerProps = {className}
 
@@ -64,14 +85,16 @@ function Exchange (props) {
       <InputContainer>
         <MoneyInput value={amount}
                     onChange={amountChanged}/>
-        {exchange && <Rate currencyCodeFrom={accounts[fromAccountId].currencyCode}
-                           currencyCodeTo={accounts[toAccountId].currencyCode}
-                           rate={exchange.exchangeRate}
-                           fixed={4}/>}
         {exchange &&
         <ExchangeButton disabled={!isExchangePossible}
-                        onClick={() => doExchange({fromAccountId, toAccountId, amount, exchangeAmount: exchange.exchangeAmount, exchangeRate:exchange.exchangeRate})}>
-          {`Exchange to ${CurrencyCodeToSymbolMap[accounts[toAccountId].currencyCode]}${exchange.exchangeAmount}`}</ExchangeButton>}
+                        onClick={onExchange}>
+          {exchangeMessage()}
+          <Rate currencyCodeFrom={accounts[fromAccountId].currencyCode}
+                currencyCodeTo={accounts[toAccountId].currencyCode}
+                rate={exchange.exchangeRate}
+                fixed={4}/>
+        </ExchangeButton>
+        }
       </InputContainer>
       <AccountList accounts={accounts}
                    selectAccount={selectToAccount}

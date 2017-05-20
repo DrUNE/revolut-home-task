@@ -1,40 +1,27 @@
 /**
  * Created by drune on 14/05/2017.
  */
+import { compose } from 'redux'
 import * as types from './constants'
-import { liveExchangeRatesSubscriptions } from './selectors'
 import rates from 'api/rates'
 import * as accounts from 'api/accounts'
 
-const pollIntervalMilliseconds = 3000 * 1000
+const pollIntervalMilliseconds = 30 * 1000
 
-function dispatchLater (dispatch, actionCreator){
-  return (...args) => dispatch(actionCreator(...args))
-}
+export const selectFromAccount = (id) => ({
+  type   : types.SELECT_FROM_ACCOUNT,
+  payload: id
+})
 
-const ratesByCurrencies = (currencies) =>
-  (dispatch, getState) =>
-    rates(...currencies)
-      .then(newRates => dispatch(exchangeRates(newRates)))
+export const selectToAccount = (id) => ({
+  type   : types.SELECT_TO_ACCOUNT,
+  payload: id
+})
 
-export const startLiveExchangeRates = (currencies) =>
-  (dispatch, getState) => {
-
-    dispatch(ratesByCurrencies(currencies))
-
-    const pollerId = setInterval(() => dispatch(ratesByCurrencies(currencies)), pollIntervalMilliseconds)
-
-    return dispatch({
-      type   : types.START_LIVE_EXCHANGE_RATES,
-      payload: pollerId
-    })
-  }
-
-export const selectFromAccount = (id) => ({type: types.SELECT_FROM_ACCOUNT, payload: id})
-
-export const selectToAccount = (id) => ({type: types.SELECT_TO_ACCOUNT, payload: id})
-
-export const amountChanged = (amount) => ({type: types.AMOUNT_CHANGED, payload: amount})
+export const amountChanged = (amount) => ({
+  type   : types.AMOUNT_CHANGED,
+  payload: amount
+})
 
 export const stopLiveExchangeRates = () => ({
   type: types.STOP_LIVE_EXCHANGE_RATES
@@ -45,20 +32,40 @@ export const exchangeRates = (newRates) => ({
   payload: newRates
 })
 
-export const accountsChanged = (accounts) =>({
+export const accountsChanged = (accounts) => ({
   type   : types.ACCOUNTS_CHANGED,
   payload: accounts
 })
 
+export const startExchangeRates = (pollerId) => ({
+  type   : types.START_LIVE_EXCHANGE_RATES,
+  payload: pollerId
+})
+
+const ratesByCurrencies = (currencies) =>
+  (dispatch, getState) =>
+    rates(...currencies)
+      .then(compose(dispatch, exchangeRates))
+
+export const startLiveExchangeRates = (currencies) =>
+  (dispatch) => {
+
+    const dispatchRates = compose(dispatch, ratesByCurrencies)
+    dispatchRates(currencies)
+
+    const pollerId = setInterval(() => dispatchRates(currencies), pollIntervalMilliseconds)
+
+    return dispatch(startExchangeRates(pollerId))
+  }
+
 export const accountsInfo = () =>
-  (dispatch, getState) => {
-    accounts.notifyChanges(dispatchLater(dispatch, accountsChanged))
+  (dispatch) => {
+    accounts.notifyChanges(compose(dispatch, accountsChanged))
     accounts.notifyAccountsChanged()
   }
 
 export const doExchange = (exchange) =>
-  (dispatch, getState) => {
-    accounts.notifyChanges(dispatchLater(dispatch, accountsChanged))
+  () => {
     //TODO here can be done validation before send to backend
     accounts.doExchange(exchange)
   }

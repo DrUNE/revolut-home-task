@@ -11,8 +11,6 @@ const Container = styled.div`
   padding: 8px;
 `
 
-const selectedStyle = ({selected}) => selected ? 'border: 1px solid white;' : ''
-
 const Account = styled(AccountComponent)`
   margin-bottom: 32px;
 `

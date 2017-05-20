@@ -1,8 +1,6 @@
 /**
  * Created by drune on 16/05/2017.
  */
-import React from 'react'
-import { PropTypes } from 'prop-types'
 import styled from 'styled-components'
 import { hoverAnimation } from 'components/theme'
 
@@ -18,7 +16,6 @@ const ExchangeButton = styled.button`
   background-color: #1d95e7;
   
   margin-top: 50px;
-  height: 40px;
   padding: 10px;
   
   ${stylesWhenDisabled}

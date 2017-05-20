@@ -9,6 +9,7 @@ const RATES_REQUEST = `https://openexchangerates.org/api/latest.json?app_id=${ap
 const fetch = window.fetch
 
 function responseData (response) {
+  //can be included custom parsing for response
   return response.text().then(JSON.parse)
 }
 
