@@ -2,31 +2,11 @@
  * Created by drune on 26/04/2017.
  */
 import Big from 'big.js'
-import uuid from 'uuid/v4'
-
-import * as CurrencyCode from 'domain/CurrencyCode'
-
 import * as types from './constants'
-
-const accounts = {
-  [uuid()]: {
-    currencyCode: CurrencyCode.EUR,
-    amount      : Big(0)
-  },
-  [uuid()]: {
-    currencyCode: CurrencyCode.GBP,
-    amount      : Big(0)
-  },
-  [uuid()]: {
-    currencyCode: CurrencyCode.USD,
-    amount      : Big(0)
-  },
-
-}
 
 export const appInitialState = {
   exchangeRatePollerId: null,
-  accounts,
+  accounts            : {},
   rates               : {},
   fromAccountId       : null,
   toAccountId         : null,

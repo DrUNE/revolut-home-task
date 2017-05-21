@@ -18,6 +18,8 @@ const ExchangeButton = styled.button`
   margin-top: 50px;
   padding: 10px;
   
+  cursor: pointer;
+  
   ${stylesWhenDisabled}
 `
 

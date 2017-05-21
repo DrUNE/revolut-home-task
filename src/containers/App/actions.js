@@ -27,7 +27,7 @@ export const stopLiveExchangeRates = () => ({
   type: types.STOP_LIVE_EXCHANGE_RATES
 })
 
-export const exchangeRates = (newRates) => ({
+export const exchangeRates = (newRates = {}) => ({
   type   : types.EXCHANGE_RATES,
   payload: newRates
 })

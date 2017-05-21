@@ -1,10 +1,10 @@
-export const rate = `
-  \{
+export const mockRates = `
+  {
   "disclaimer": "Usage subject to terms: https://openexchangerates.org/terms",
   "license": "https://openexchangerates.org/license",
   "timestamp": 1495296011,
   "base": "USD",
-  "rates": \{
+  "rates": {
     "AED": 3.673097,
     "AFN": 68.155,
     "ALL": 120.15,

@@ -25,10 +25,11 @@ const exchange = createSelector(
 
       const fromRate = rates[fromCurrencyCode]
       const toRate = rates[toCurrencyCode]
-
-      const exchangeRate = toRate.div(fromRate)
-      const exchangeAmount = amount.times(exchangeRate).round(2, 0)
-      return {exchangeRate, exchangeAmount}
+      if (fromRate && toRate) {
+        const exchangeRate = toRate.div(fromRate)
+        const exchangeAmount = amount.times(exchangeRate).round(2, 0)
+        return {exchangeRate, exchangeAmount}
+      }
     }
   })
 
