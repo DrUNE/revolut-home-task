@@ -4,7 +4,6 @@
 import Big from 'big.js'
 
 import apiKey from './apiKey'
-import { mockRates } from './mock'
 
 const RATES_REQUEST = `https://openexchangerates.org/api/latest.json?app_id=${apiKey}`
 const fetch = window.fetch
@@ -15,9 +14,12 @@ function responseData (response) {
 }
 
 function checkResponse (response) {
-  console.log(response)
-  return response
+  if (response.ok){
+    return response
+  }
+  throw new Error('Bad response');
 }
+
 function logError (e) {
   console.log(e)
 }
@@ -30,10 +32,6 @@ function rates () {
   return fetch(RATES_REQUEST)
     .then(checkResponse)
     .then(responseData)
-}
-
-rates = function mockResponse () {
-  return Promise.resolve(JSON.parse(mockRates))
 }
 
 export default (...currencies) => rates()
